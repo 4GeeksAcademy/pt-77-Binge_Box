@@ -141,21 +141,21 @@ export const Private = () => {
     }
 
     return (
-        <div className="text-center mt-2">
-            <div className="containter-fluid">
-                <div className="card">
-                    <div className="card-header">
-                        {message}
+        <div className="text-center my-5">
+            <div className="containter-fluid my-5">
+                <div className="profileCard card border-2 rounded border-dark mx-2 pb-5">
+                    <div className="card-header border-2 rounded border-dark">
+                        <h5>{message}</h5>                        
                     </div>
-                    <div className="card-body">
-                        <div className="d-flex">
-                            <div className="d-flex flex-column col-4 mb-2">
+                    <div className="card-body border-2 rounded border-dark">
+                        <div className="d-flex align-items-center">
+                            <div className="border-2 rounded border-dark d-flex flex-column col-4 mb-2">
                                 <img
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSllHYt7njYkqDfNdEBcNHiNkOwov2NXCnC6Q&s" 
-                                    className="img-thumbnail mx-2" 
+                                    className="img-thumbnail border-2 rounded border-dark mx-2" 
                                     alt="..."/> 
                                 {/* <!-- Button trigger modal --> */}
-                                <button type="button" className="btn btn-info mt-3 w-50 mx-auto" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <button type="button" className="btn btn-primary btn-outline-dark p-2 mt-3 w-50 mx-auto" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 Upload Photo
                                 </button>
 
@@ -192,7 +192,7 @@ export const Private = () => {
                                                 </button>
                                                 <button 
                                                     type="button" 
-                                                    className="btn btn-primary"
+                                                    className="btn btn-primary btn-outline-dark"
                                                     onClick={handleImage}>Save Photo</button>
                                             </div>
                                         </div>
@@ -201,16 +201,16 @@ export const Private = () => {
                             </div>
                             <div className="d-flex flex-column col-6 mx-3">
                                 {store.user? 
-                                    <div className="text-start mb-3">                                    
+                                    <div className="text-start mb-1">                                    
                                         <p>{store.user.first_name + " " + store.user.last_name}</p>
                                         <p>{store.user.user_name}</p>
                                         <p>{store.user.email}</p>
                                     </div>
                                     : null}
-                                <label htmlFor="input" className="mb-3">Bio:</label>
+                                <label htmlFor="input" className="mb-2">Bio:</label>
                                 <div>                                
                                     <textarea 
-                                        className="w-100"
+                                        className="border-2 rounded border-dark rounded w-100"
                                         type="text"
                                         rows="10"
                                         value={bio}
@@ -219,9 +219,9 @@ export const Private = () => {
                                         readOnly={!editBio}
                                     />
                                     {editBio ? (
-                                        <button className="btn btn-info w-50 mx-auto mt-2" onClick={handleBio}>Save Bio</button>
+                                        <button className="btn btn-primary btn-outline-dark w-50 mx-auto mt-3 p-2" onClick={handleBio}>Save Bio</button>
                                     ) : (
-                                        <button className="btn btn-info w-50 mx-auto mt-2" onClick={() => setEditBio(true)}>Edit Bio</button>
+                                        <button className="btn btn-primary btn-outline-dark w-50 mx-auto mt-3 p-2" onClick={() => setEditBio(true)}>Edit Bio</button>
                                     )}
                                 </div>
                             </div>                                              
@@ -231,7 +231,7 @@ export const Private = () => {
             </div> 
             <button
                 onClick={handleLogout} 
-                className="btn btn-danger mt-3 mx-center">
+                className="btn btn-danger m-3 mx-center">
                     Log Out
             </button>           
         </div>

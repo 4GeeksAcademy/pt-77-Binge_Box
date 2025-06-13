@@ -16,7 +16,7 @@ export const Login = () => {
     return (
         <div className="text-center mt-5 w-50 mx-auto">
             <div className="userlogin">                
-                <div className="input-group mb-3">
+                <div className="login input-group mb-3 border-dark">
                     <span className="input-group-text" id="inputGroup-sizing-default">Email</span>
                     <input 
                         type="email" 
@@ -26,7 +26,7 @@ export const Login = () => {
                         onChange={(e) => setUser({...user, email: e.target.value})}
                     />
                 </div>
-                <div className="input-group mb-3">
+                <div className="login input-group mb-3 border-dark">
                     <span className="input-group-text" id="inputGroup-sizing-default">Password</span>
                     <input 
                         type="password" 
@@ -39,7 +39,7 @@ export const Login = () => {
             </div>
             <button                 
                 type="button" 
-                className="btn btn-info"
+                className="btn btn-primary border-dark m-4"
                 onClick={() => handleLogin()}>Login</button>
         </div>
     );

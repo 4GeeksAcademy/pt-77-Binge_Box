@@ -10,38 +10,83 @@ export const ShowCard = (props) => {
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const[bookmarked, setBookmarked] = useState(false);
-  const[favorites, setFavorites] = useState([]);  
+  const[showFavorites, setShowFavorites] = useState([]);  
   const [watchList, setWatchList] = useState([]);
+  const [selectedShow, setSelectedShow] = useState(null);
 
   const shortenedOverview =
     props.overview && props.overview.length > 50
       ? props.overview.slice(0, 50) + "..."
       : props.overview;
 
- const toggleLiked = () => {
-  setLiked(!liked);
-  if(liked){
-    handleLiked(id);
-  }  
-};
+  const toggleLiked = () => {
+    const newLike = !liked;
+    setLiked(newLike);
+    if (newLike) {
+      handleLiked();
+    }
+  };
 
 const handleLiked = async () => {
     const token = sessionStorage.getItem('access_token');
-    try {
-      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/user/favorites', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ favorites: props.id })
-      });
-      const data = await response.json();
-      console.log(data.message);
-    } catch (error) {
-      console.error("Failed to update favs", error);
+
+    if (!token) {
+      console.error("No token found");
+      return;
     }
-  };  
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/favorites`, {
+        method: 'POST',
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ show_id: props.id })
+      });
+      if (!response.ok) throw new Error("Failed to add favorite");
+
+      const data = await response.json();
+      console.log("Favorite added:", data);
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+    }
+  };
+
+   useEffect(() => {
+    const fetchFavShow = async () => {
+      const token = sessionStorage.getItem("access_token");
+
+      if (!token) {
+        console.error("No token found.");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/user/favorites`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch favorites");
+
+        const data = await response.json();
+        setShowFavorites(
+          data.favorites
+          .filter(fav => fav.show_id !== null && fav.show_id !== undefined)
+          .map(fav => fav.show_id)
+        );
+      } catch (err) {
+        console.error("Error fetching favorites:", err);
+      }
+    };
+    fetchFavShow();
+  }, []);
 
   const toggleBookmarked = () => {
     setBookmarked(!bookmarked);
@@ -53,7 +98,7 @@ const handleLiked = async () => {
   const handleWatchList = async () => {
     const token = sessionStorage.getItem('access_token');
     try {
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/user/favorites', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/favorites`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
