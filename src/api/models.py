@@ -15,9 +15,12 @@ class User(db.Model):
     # trying Text instad of String
     user_image: Mapped[str] = mapped_column(Text, nullable=True)
     password: Mapped[str] = mapped_column(nullable=False)
+    reset_token: Mapped[str] = mapped_column(String(120), nullable=True)
+    token_experation: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     favorites: Mapped[list["Favorites"]] = relationship(back_populates = "user_favorites")
     watches: Mapped[list["Watches"]] = relationship(back_populates = "user_watches")
+    
 
 
     def serialize(self):
@@ -29,6 +32,8 @@ class User(db.Model):
             "user_name": self.user_name,
             "user_bio": self.user_bio,
             "user_image": self.user_image,
+            "reset_token": self.reset_token,
+            "token_experation": self.token_experation,
             "favorites": self.favorites,
             "watches": self.watches,
             # do not serialize the password, its a security breach
@@ -40,19 +45,19 @@ class Favorites(db.Model):
     user_name: Mapped[str] = mapped_column(ForeignKey("user.user_name"))
     user_favorites: Mapped["User"] = relationship(back_populates = "favorites")
 
-    review_id: Mapped[int] = mapped_column(ForeignKey("reviews.id"))
+    review_id: Mapped[int] = mapped_column(ForeignKey("reviews.id"), nullable=True)
     fav_review: Mapped["Reviews"] = relationship(back_populates = "favorites")
 
-    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id"))
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id"), nullable=True)
     fav_comment: Mapped["Comments"] = relationship(back_populates = "favorites")
 
-    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"))
+    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"), nullable=True)
     tag_user: Mapped["Tags"] = relationship(back_populates = "favorites")
 
-    show_id: Mapped[int] = mapped_column(ForeignKey("shows.id"))
+    show_id: Mapped[int] = mapped_column(ForeignKey("shows.id"), nullable=True)
     fav_show: Mapped["Shows"] = relationship(back_populates = "favorites")
 
-    movie_id: Mapped[int] = mapped_column(ForeignKey("movies.id"))
+    movie_id: Mapped[int] = mapped_column(ForeignKey("movies.id"), nullable=True)
     fav_movie: Mapped["Movies"] = relationship(back_populates = "favorites")
     
 
@@ -131,11 +136,11 @@ class Tags(db.Model):
     
 class Shows(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(520), nullable=False)
-    season: Mapped[str] = mapped_column(String(520), nullable=False)
-    episode: Mapped[str] = mapped_column(String(520), nullable=False)
-    discription: Mapped[str] = mapped_column(String(520), nullable=False)
-    rating: Mapped[str] = mapped_column(String(520), nullable=False)
+    title: Mapped[str] = mapped_column(String(520), nullable=True)
+    season: Mapped[str] = mapped_column(String(520), nullable=True)
+    episode: Mapped[str] = mapped_column(String(520), nullable=True)
+    discription: Mapped[str] = mapped_column(String(520), nullable=True)
+    rating: Mapped[str] = mapped_column(String(520), nullable=True)
     favorites: Mapped["Favorites"] = relationship(back_populates = "fav_show")
     watch_later: Mapped["Watches"] = relationship(back_populates = "watch_show_later")
     continue_watching: Mapped["Watches"] = relationship(back_populates = "watch_show_again")
@@ -153,9 +158,9 @@ class Shows(db.Model):
     
 class Movies(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(520), nullable=False)
-    discription: Mapped[str] = mapped_column(String(520), nullable=False)
-    rating: Mapped[str] = mapped_column(String(520), nullable=False)
+    title: Mapped[str] = mapped_column(String(520), nullable=True)
+    discription: Mapped[str] = mapped_column(String(520), nullable=True)
+    rating: Mapped[str] = mapped_column(String(520), nullable=True)
     favorites: Mapped["Favorites"] = relationship(back_populates = "fav_movie")
     watch_movie_later: Mapped["Watches"] = relationship(back_populates = "watch_movie_later")
     continue_watching_movies: Mapped["Watches"] = relationship(back_populates = "watch_movie_again")

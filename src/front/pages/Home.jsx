@@ -61,22 +61,7 @@ export const Home = () => {
     getGenres().then((data) => {
       setGenres(data.genres);
     });
-  }, []);
-
-  useEffect(() => {
-    let actionGenre = genres.find((g) => g.id === 10759);
-    let actionGenreId = actionGenre ? actionGenre.id : null;
-
-    Array.isArray(shows) && shows.length > 0
-      ? setAction(
-          shows.filter(
-            (show) =>
-              Array.isArray(show.genre_ids) &&
-              show.genre_ids.includes(actionGenreId)
-          )
-        )
-      : [];
-  }, [shows, genres]);
+  }, []); 
 
   useEffect(() => {
     setShows(store.shows);
@@ -97,13 +82,29 @@ export const Home = () => {
     store.topRatedMovies,
     store.trendingMovies,
   ]);
+  
+  const handleLogout = () => {
+        sessionStorage.removeItem('access_token');
+        dispatch({
+            type: "set_user",
+            payload: { user: null, access_token: null },
+        });
+        navigate("/login");
+    }
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scroll
+    });
+  }
 
   // console.log(shows, airingToday, topRated, "HERE");
 
   return (
     <div className="text-center mt-5">
       <Carousel />
-      <h2 className="text-bg-dark mt-5 p-2">Top Rated Films</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Top Rated Films</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(topRatedMovies) && topRatedMovies.length > 0 ? (
           topRatedMovies
@@ -126,7 +127,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Trending Films</h2>
+      <h2 className="Headers text-bg-dark mt-5 p-2">Trending Films</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(trendingMovies) && trendingMovies.length > 0 ? (
           trendingMovies
@@ -149,7 +150,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Popular Films</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Popular Films</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(popularMovies) && popularMovies.length > 0 ? (
           popularMovies
@@ -172,7 +173,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Films Playing Now</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Films Playing Now</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(moviesPlayingNow) && moviesPlayingNow.length > 0 ? (
           moviesPlayingNow
@@ -195,7 +196,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Top Rated</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Top Rated</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(topRated) && topRated.length > 0 ? (
           topRated
@@ -218,7 +219,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Trending TV</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Trending TV</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(trending) && trending.length > 0 ? (
           trending
@@ -241,7 +242,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Popular TV</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Popular TV</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(shows) && shows.length > 0 ? (
           shows
@@ -264,7 +265,7 @@ export const Home = () => {
         )}
       </div>
 
-      <h2 className="text-bg-dark mt-5 p-2">Airing Today</h2>
+      <h2 className=" Headers text-bg-dark mt-5 p-2">Airing Today</h2>
       <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
         {Array.isArray(airingToday) && airingToday.length > 0 ? (
           airingToday
@@ -286,41 +287,32 @@ export const Home = () => {
           <p>No shows found.</p>
         )}
       </div>
+      
+      <div className=" Headers d-flex justify-content-center text-bg-dark my-5 p-2">
+         <Link className="btn btn-outline-primary mx-2" to={"/profile"}>View Profile</Link>
+         <button 
+            className="btn btn-outline-primary mx-3" 
+            onClick={scrollToTop}>Back to Top
+         </button>
+         <button 
+            className="btn btn-outline-primary mx-3"
+            onClick={handleLogout}  
+            to={"/profile"}>Logout
+          </button>
 
-      {/* <h2 className="text-bg-dark mt-5 p-2">Action</h2>
-      <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto ">
-        {Array.isArray(action) && action.length > 0 ? (
-          action
-            .slice(0, 15)
-            .map((show, index) => (
-              <ShowCard
-                key={index}
-                id={show.id}
-                poster_path={show.poster_path}
-                first_air_date={show.first_air_date}
-                name={show.name}
-                overview={show.overview}
-                vote_average={show.vote_average}
-                first_air_date={show.first_air_date}
-                onClick={() => setSelectedShow({ id })}
-              />
-            ))
-        ) : (
-          <p>No shows found.</p>
-        )}
-      </div> */}
-
+          
+      </div>
+     
       <div className="alert alert-info">
         {store.message ? (
           <span>{store.message}</span>
         ) : (
           <span className="text-danger">
-            Loading message from the backend (make sure your python 🐍 backend
-            is running)...
+            {/* Loading message from the backend (make sure your python 🐍 backend
+            is running)... */}
           </span>
         )}
-      </div>
-      <Link to={"/profile"}>View Profile</Link>
+      </div>      
     </div>
   );
 };

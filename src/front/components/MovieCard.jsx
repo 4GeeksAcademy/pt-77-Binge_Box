@@ -2,16 +2,20 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faHeart, faBookmark, faComment  } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeart,
+  faBookmark,
+  faComment,
+} from "@fortawesome/free-solid-svg-icons";
 import { StarRating } from "./StarRating.jsx";
 
 export const MovieCard = (props) => {
   const { store, dispatch } = useGlobalReducer();
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
-  const[movieFavorites, setMovieFavorites] = useState([]);
-  const[bookmarked, setBookmarked]= useState(false);
-  
+  const [movieFavorites, setMovieFavorites] = useState([]);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   const shortenedOverview =
     props.overview && props.overview.length > 50
@@ -19,42 +23,47 @@ export const MovieCard = (props) => {
       : props.overview;
 
   const toggleLiked = () => {
-  setLiked(!liked);
-  if(liked){
-    handleLiked(id);
-  }  
-};
+    const newLike = !liked;
+    setLiked(newLike);
+    if (newLike) {
+      handleLiked();
+    }
+  };
 
-const handleLiked = async () => {
-  const token = sessionStorage.getItem("token");
+  const handleLiked = async () => {
+    const token = sessionStorage.getItem("access_token");
 
-  if (!token) {
-    console.error("No token found");
-    return;
-  }
-  try {
-    const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/user/favorites', {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        movie_id
-      }),
-    });
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/user/favorites`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            movie_id: props.id,
+          }),
+        }
+      );
 
-    if (!response.ok) throw new Error("Failed to add favorite");
+      if (!response.ok) throw new Error("Failed to add favorite");
 
-    const data = await response.json();
-    console.log("Favorite added:", data);
-  } catch (error) {
-    console.error("Error adding favorite:", error);
-  }
-}
-useEffect(() => {
+      const data = await response.json();
+      console.log("Favorite added:", data);
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+    }
+  };
+  
+  useEffect(() => {
     const fetchFavMovies = async () => {
-      const token = sessionStorage.getItem("token");
+      const token = sessionStorage.getItem("access_token");
 
       if (!token) {
         console.error("No token found.");
@@ -62,18 +71,25 @@ useEffect(() => {
       }
 
       try {
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/user/favorites', {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-Type": "application/json"
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/user/favorites`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
           }
-        });
+        );
 
         if (!response.ok) throw new Error("Failed to fetch favorites");
 
         const data = await response.json();
-        setMovieFavorites(data.favorites.movie_id);
+        setMovieFavorites(
+          data.favorites
+          .filter(fav => fav.movie_id !== null && fav.movie_id !== undefined)
+          .map(fav => fav.movie_id)
+        );
       } catch (err) {
         console.error("Error fetching favorites:", err);
       }
@@ -82,35 +98,34 @@ useEffect(() => {
   }, []);
 
   console.log(movieFavorites);
-  
 
   const toggleBookmarked = () => {
     setBookmarked(!bookmarked);
-    if(bookmarked){      
-      handleWatchList(id);     
+    if (bookmarked) {
+      handleWatchList(id);
     }
   };
 
   const handleWatchList = async () => {
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem("access_token");
     try {
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/user/favorites', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({favorites: props.id})
-        });
-        const data = await response.json();
-        console.log(data.message);
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + "/user/favorites",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ favorites: props.id }),
+        }
+      );
+      const data = await response.json();
+      console.log(data.message);
     } catch (error) {
-        console.error("Failed to update favs")
-    }       
+      console.error("Failed to update favs");
+    }
   };
-
-  
-  
 
   const onMovieClick = () => {};
 
@@ -159,28 +174,34 @@ useEffect(() => {
             <li className="list-group-item">
               <div className="d-flex justify-content-around">
                 <span
-                onClick={() => toggleBookmarked(props.id)}
-                style={{ color: bookmarked ? 'red' : 'gray'}} 
-                className="icon">
+                  onClick={() => toggleBookmarked(`${props.id}`)}
+                  style={{ color: bookmarked ? "red" : "gray" }}
+                  className="icon"
+                >
                   <FontAwesomeIcon icon={faBookmark} />
                 </span>
                 <Link to={`/reviews/movie/${props.id}`}>
-                  <span style={{color: 'gray'}}><FontAwesomeIcon icon={faComment} /></span>
-                </Link>                
+                  <span style={{ color: "gray" }}>
+                    <FontAwesomeIcon icon={faComment} />
+                  </span>
+                </Link>
                 <span
-                  onClick={() => toggleLiked(props.id)}
-                  style={{ color: liked ? 'red' : 'gray'}} 
-                  className="icon">
+                  onClick={toggleLiked}
+                  style={{ color: liked ? "red" : "gray" }}
+                  className="icon"
+                >
                   <FontAwesomeIcon icon={faHeart} />
                 </span>
-              </div>              
+              </div>
             </li>
-            <li className="list-group-item"><b>Release Date:</b> {props.release_date}</li>
+            <li className="list-group-item">
+              <b>Release Date:</b> {props.release_date}
+            </li>
             <li className="list-group-item">
               <span className="Vote text-center">
                 <StarRating vote_average={props.vote_average} />
                 {props.vote_average}
-              </span>              
+              </span>
             </li>
           </ul>
           <div className="card-body d-flex">

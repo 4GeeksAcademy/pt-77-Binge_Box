@@ -40,18 +40,28 @@ export const MovieDetails = () => {
                 }}>
             </div>
             <div className="d-flex m-5 ">
-                <img src={`https://image.tmdb.org/t/p/w500${movieData.poster_path}`}/>
+                <img className="posterImage" src={`https://image.tmdb.org/t/p/w500${movieData.poster_path}`}/>
                 <div className="text-light p-3">
                     <h1>{movieData.title}</h1> 
                     <p>{movieData.tagline}</p>                                                         
                     <p>{movieData.overview}</p>
-                    <p>Release Date: {movieData.release_date}</p>  
+                    <p>Release Date: {movieData.release_date}</p> 
+                    <p>Rating: {movieData.vote_average}</p> 
                     <p>Runtime: {movieData.runtime}</p>
-                    <p>{movieData.vote_average}</p>
-                    <p>{movieData.origin_country}</p>      
-                    <div className="buttons">
+                    <p>Origin Country: {movieData.origin_country}</p>                   
+                    {movieData.production_companies?.length > 0 && movieData.production_companies[0].logo_path && (
+                        <img
+                            className="mb-2"
+                            src={`https://image.tmdb.org/t/p/w200${movieData.production_companies[0].logo_path}`}
+                            alt={movieData.production_companies[0].name}
+                        />
+                        )}
+                    <div className="buttons mt-4">
                         <Link className="btn btn-dark" to={`/watchMovieTrailer/${id}`}>Watch Trailer</Link>
-                        <Link className="btn btn-dark mx-2" to={`/reviews/movie/${id}`}>Rate & Review</Link>                    
+                        <Link className="btn btn-dark mx-2" to={`/reviews/movie/${id}`}>Rate & Review</Link>
+                        <div>
+                            <a href={movieData.homepage} target="_blank" rel="noopener noreferrer" className="card-link btn btn-dark mt-3">{movieData.homepage}</a>
+                        </div>
                     </div>              
                 </div>                 
             </div>

@@ -16,7 +16,7 @@ export const Signup = () => {
     return (
         <div className="text-center mt-5 w-50 mx-auto">
             <div className="userInfo">
-                <div className="input-group mb-3">
+                <div className="signup input-group mb-3">
                     <span className="input-group-text" id="inputGroup-sizing-default">First Name</span>
                     <input 
                         type="text" 
@@ -26,7 +26,7 @@ export const Signup = () => {
                         onChange={(e) => setUser({...user, first_name: e.target.value})}
                     />
                 </div>
-                <div className="input-group mb-3">
+                <div className="signup input-group mb-3">
                     <span className="input-group-text" id="inputGroup-sizing-default">Last Name</span>
                     <input 
                         type="text" 
@@ -36,7 +36,7 @@ export const Signup = () => {
                         onChange={(e) => setUser({...user, last_name: e.target.value})}
                     />
                 </div>
-                <div className="input-group mb-3">
+                <div className="signup input-group mb-3">
                     <span className="input-group-text" id="inputGroup-sizing-default">Email</span>
                     <input 
                         type="email" 
@@ -46,7 +46,7 @@ export const Signup = () => {
                         onChange={(e) => setUser({...user, email: e.target.value})}
                     />
                 </div>
-                <div className="input-group mb-3">
+                <div className="signup input-group mb-3">
                     <span className="input-group-text" id="inputGroup-sizing-default">User Name</span>
                     <input 
                         type="text" 
@@ -56,7 +56,7 @@ export const Signup = () => {
                         onChange={(e) => setUser({...user, user_name: e.target.value})}
                     />
                 </div>
-                <div className="input-group mb-3">
+                <div className="signup input-group mb-3">
                     <span className="input-group-text" id="inputGroup-sizing-default">Password</span>
                     <input 
                         type="password" 
@@ -69,7 +69,7 @@ export const Signup = () => {
             </div>
             <button 
                 type="button" 
-                className="btn btn-info"
+                className="btn btn-primary border-dark m-4"
                 onClick={() => handleSignup()}>Create Account</button>
         </div>
     );

@@ -64,7 +64,7 @@ export const ShowDetails = () => {
         fetchAllSeasons();
     }, [series_id, season_numbers]);
 
-    console.log(seasonImages[0], seasonVideos);
+    // console.log(seasonImages[0], seasonVideos);
 
     return (
         <div className="text-center mt-5">
@@ -76,17 +76,46 @@ export const ShowDetails = () => {
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     position: "relative",}}>
+            </div>            
+            <div className="d-flex m-5">
+                <img 
+                    className="posterImage" 
+                    src={`https://image.tmdb.org/t/p/w500${seriesData.poster_path}`}
+                />
+                <div className="text-light p-3">
+                    <h1>{seriesData.name}</h1>
+                    <p>seriesData.tagline</p>
+                    <p>{seriesData.overview}</p>
+                    <p>Release Date: {seriesData.first_air_date}</p>
+                    <p>Rating: {seriesData.vote_average}</p>
+                    <p>Seasons: {seriesData.number_of_seasons}</p>
+                    <p>Episodes: {seriesData.number_of_episodes}</p>                    
+                    {seriesData.networks?.length > 0 && seriesData.networks[0].logo_path && (
+                        <img
+                            src={`https://image.tmdb.org/t/p/w200${seriesData.networks[0].logo_path}`}
+                            alt={seriesData.networks[0].name}
+                        />
+                        )}                
+                    <div className="buttons mt-3 ">
+                        <Link className="btn btn-dark mx-3" to={`/watchTrailer/${series_id}`}>Watch Trailer</Link>
+                        <Link className="btn btn-dark mx-3" to={`/reviews/series/${series_id}`}>Rate & Review</Link> 
+                        <div>
+                            <a 
+                                href={seriesData.homepage} 
+                                target="_blank" rel="noopener noreferrer" 
+                                className="card-link btn btn-dark mt-3">
+                                    {seriesData.homepage}
+                            </a> 
+                        </div>                   
+                    </div>
+                </div>  
             </div>
-            <div className="buttons mt-3 ">
-                <Link className="btn btn-dark mx-3" to={`/watchTrailer/${series_id}`}>Watch Trailer</Link>
-                <Link className="btn btn-dark mx-3" to={`/reviews/series/${series_id}`}>Rate & Review</Link>                    
-            </div>  
             {allSeasonsData.length === 0 ? (
                 <p>Loading seasons...</p>
             ) : (
                 allSeasonsData.map((season, idx) => (
                     <div key={season.id || idx}>                        
-                        <h2 className="text-bg-dark mt-5 p-2">Season: {season.season_number}</h2>
+                        <h2 className="Headers text-bg-dark mt-5 p-2">Season: {season.season_number}</h2>
                         <div className="d-flex align-items-stretch col-10 overflow-auto mt-2 mx-auto">
                             {Array.isArray(season.episodes) && season.episodes.length > 0 ? (
                                 season.episodes.map((episode, index) => (

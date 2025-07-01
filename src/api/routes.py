@@ -56,6 +56,15 @@ def handle_login():
         return jsonify(access_token=access_token, user=user.serialize()), 200
     else:
         return jsonify("User not found"), 400
+    
+# @api.route('/request-reset', methods=['POST'])
+# def request_reset():
+#     data = request.get_json()
+#     user_email = data.get("email")
+    
+
+# @api.route('/reset-password', methods=['POST'])
+# def handle_login():
 
 
 @api.route('/private', methods=['GET'])
@@ -133,10 +142,31 @@ def handle_get_users():
 @api.route('/user/favorites', methods=['POST'])
 @jwt_required()
 def add_favorite():
-    user_email = get_jwt_identity()
-    user = User.query.filter_by(user_email=user_email).first()
-
     data = request.get_json()
+    movie_id = data.get('movie_id')
+    show_id = data.get('show_id')
+    review_id=data.get("review_id"),
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+
+    movie = db.session.get(movie_id)
+    if not movie:
+        movie = movie(id=movie_id)
+        db.session.add(movie)
+        db.session.commit()
+        return movie    
+    show = db.session.get(show_id)
+    if not show:
+        show = show(id=movie_id)
+        db.session.add(show)
+        db.session.commit()
+        return show    
+    review = db.session.get(review_id)
+    if not review:
+        review = review(id=movie_id)
+        db.session.add(review)
+        db.session.commit()
+        return review    
 
     new_favorite = Favorites(
         user_name=user.user_name,
@@ -157,7 +187,11 @@ def add_favorite():
 @jwt_required()
 def handle_get_user_favs():
     user_email = get_jwt_identity()
-    user = User.query.filter_by(user_email=user_email).first()
+    user = User.query.filter_by(email=user_email).first()
+    print(user.favorites)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
 
     favorites = [fav.serialize() for fav in user.favorites]
 

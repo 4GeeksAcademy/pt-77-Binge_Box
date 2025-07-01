@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const WatchTrailer = () => {
@@ -50,9 +50,9 @@ export const WatchTrailer = () => {
               backgroundPosition: "center",
               position: "relative",}}>
                 
-      </div>
+      </div>      
       <iframe
-        className="mt-5"
+        className="Headers mt-5"
         width="560"
         height="315"
         src={videoUrl}
@@ -62,6 +62,40 @@ export const WatchTrailer = () => {
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen
       ></iframe>
+      <div className="buttons mt-3 ">
+        <Link 
+          className="btn btn-dark mx-3" 
+          to={`/showDetails/1/${series_id}`}
+          onClick={() => onShowClick(series_id, 1)}>
+            View Episodes
+        </Link>
+        <Link className="btn btn-dark mx-3" to={`/reviews/series/${series_id}`}>Rate & Review</Link> 
+        <div>
+          <a href={tvData.homepage} className="card-link btn btn-dark mt-3">{tvData.homepage}</a>
+        </div>                  
+      </div>  
+      <div className="d-flex m-5">
+        <img 
+          className="posterImage"
+          src={`https://image.tmdb.org/t/p/w500${tvData.poster_path}`}
+        />
+        <div className="text-light p-3">
+          <h1>{tvData.name}</h1>
+          <p>{tvData.tagline}</p>
+          <p>{tvData.overview}</p>
+          <p>Release Date: {tvData.first_air_date}</p>
+          <p>Rating: {tvData.vote_average}</p>
+          <p>Seasons: {tvData.number_of_seasons}</p>
+          <p>Episodes: {tvData.number_of_episodes}</p>
+          {tvData.networks?.length > 0 && tvData.networks[0].logo_path && (
+            <img
+                src={`https://image.tmdb.org/t/p/w200${tvData.networks[0].logo_path}`}
+                alt={tvData.networks[0].name}
+            />
+            )}
+        </div>
+      </div>
     </div>    
+    
   );
 };

@@ -7,6 +7,21 @@
     padding: 0;
 }
 
+.showCard{
+    box-shadow: 2px 0px 10px 5px rgba(191, 236, 252, 0.8);
+}
+
+.Headers, .cover, #movieCarousel, .img, .posterImage{
+    box-shadow: 2px 0px 10px 5px rgba(191, 236, 252, 0.8);
+}
+.login, .signup{
+   box-shadow: 0px 0px 6px 5px rgba(0, 0, 0, 0.8);
+
+}
+.profileCard{
+    box-shadow: 0px 0px 6px 5px rgba(0, 0, 0, 0.8);
+}
+
 .showCard-title, .movieCard-title, .episodeCard-title {
     height: 40px;
     overflow: hidden;
@@ -67,6 +82,7 @@
 .vote {
   height: auto;
 }
+
 
 /* video player */
 
